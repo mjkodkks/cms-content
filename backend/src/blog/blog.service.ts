@@ -9,38 +9,72 @@ export class BlogService {
   constructor(private prisma: PrismaService) {}
 
   async create(createBlogDto: CreateBlogDto) {
-    const { title, content, seo_title, seo_keyword } = createBlogDto;
+    const { title, content, seo_title, seo_keyword, seo_description } =
+      createBlogDto;
     let blog: Prisma.BlogCreateInput;
-    let seo: Prisma.SEOCreateInput;
+    let seo;
     blog = {
       title,
       content,
     };
-    if (seo_title) {
-      seo.tilte = seo_title;
-    }
-    if (seo_keyword) {
-      seo.keyword = seo_keyword;
+
+    const useSeo = seo_title || seo_keyword || seo_description;
+    if (useSeo) {
+      seo = {};
+
+      if (seo_title) {
+        seo.title = seo_title;
+      }
+
+      if (seo_keyword) {
+        seo.keyword = seo_keyword;
+      }
+
+      if (seo_description) {
+        seo.description = seo_description;
+      }
     }
 
     console.log(blog);
+    console.log(seo);
 
-    await this.prisma.blog.create({
-      data: blog,
+    const blogResponse = await this.prisma.blog.create({
+      data: {
+        ...blog,
+        Seo: {
+          create: useSeo
+            ? {
+                ...seo,
+              }
+            : undefined,
+        },
+      },
     });
-
     // if (seo) {
-    //   this.prisma.sEO.create({
-    //     data: seo,
+    //   const seoResponse = await this.prisma.seo.create({
+    //     data: {
+    //       ...seo,
+    //       blog: {
+    //         connect: {
+    //           id: blogResponse.id,
+    //         },
+    //       },
+    //     },
     //   });
     // }
+
     return {
       res: 'success',
     };
   }
 
-  findAll() {
-    return `This action returns all blog`;
+  async findAll() {
+    const blogs = await this.prisma.blog.findMany({
+      include: {
+        Seo: true,
+      },
+    });
+    return blogs;
   }
 
   findOne(id: number) {

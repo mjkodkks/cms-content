@@ -25,16 +25,16 @@ model Blog {
   published Boolean? @default(false)
   author    String?
   authorId  Int?
-  SEO       SEO?     @relation(fields: [seoId], references: [id])
-  seoId     String?
+  Seo       Seo?
 }
 
-model SEO {
+model Seo {
   id          String @id @default(uuid())
-  tilte       String
-  description String
-  keyword     String
-  Blog        Blog[]
+  title       String
+  description String?
+  keyword     String?
+  blog        Blog?  @relation(fields: [blog_id], references: [id])
+  blog_id     String @unique
 }
 
 model Config {
@@ -43,14 +43,3 @@ model Config {
   description    String?
   google_keyword String?
 }
-
-// model Product {
-//   id        Int      @id @default(autoincrement())
-//   title     String
-//   content   String?
-//   price     Float
-//   published Boolean? @default(false)
-//   author    User?    @relation(fields: [authorId], references: [id])
-//   authorId  Int?
-//   seoId     Int?
-// }

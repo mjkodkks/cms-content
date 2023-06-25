@@ -7,5 +7,6 @@ export class CreateBlogDto {
   content: string;
 
   seo_title?: string;
+  seo_description?: string;
   seo_keyword?: string;
 }
