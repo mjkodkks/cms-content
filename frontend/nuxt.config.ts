@@ -31,6 +31,7 @@ export default defineNuxtConfig({
 
   colorMode: {
     classSuffix: '',
+    preference: 'light',
   },
 
   css: ['~/assets/css/main.css'],
@@ -46,6 +47,12 @@ export default defineNuxtConfig({
     tsConfig: {
       include: ['./types/**/*.d.ts'],
     },
+  },
+
+  runtimeConfig: {
+    public: {
+      API_URL: process.env.API_URL || ''
+    }
   },
 
   devtools: {

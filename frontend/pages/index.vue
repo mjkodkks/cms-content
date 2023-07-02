@@ -1,32 +1,49 @@
+<script setup lang="ts">
+type TSeoGlobal = {
+  id: string
+  title_tag: string
+  description: string | null
+  google_keyword: string | null
+}
+type TBlog = {
+    id: string
+    title: string
+    content: string
+    published: boolean
+    author: string | null
+    authorId: string | null
+    Seo: TSeoGlobal | null
+}
+
+const config = useRuntimeConfig()
+const { data: metaSeo } = await useFetch<TSeoGlobal>(`${config.public.API_URL}/api/seo`)
+const { data: blogs, pending} = await useFetch<TBlog[]>(`${config.public.API_URL}/api/blog`)
+
+console.log(metaSeo.value)
+console.log(blogs.value)
+
+useHead({
+  title: metaSeo.value?.title_tag || 'Title',
+  meta: [
+    { charset: 'utf-8' },
+    { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+    { hid: 'description', name: 'description', content: metaSeo.value?.description || '' },
+  ],
+  link: [
+    { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+  ],
+})
+</script>
+
 <template>
   <div>
-    <Logos class="mb-2" />
-    <div class="block">
-      <NuxtLink to="/dkks">
-        DKKs page
-      </NuxtLink>
-    </div>
-    <Suspense>
-      <PageView />
-      <template #fallback>
-        <div op50 italic>
-          <span animate-pulse>Loading...</span>
-        </div>
-      </template>
-    </Suspense>
-    <div class="flex justify-center">
-      <ul
-        class="list-image-[url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxNCAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBmaWxsPSIjMzhiZGY4Ij48cGF0aCBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy42ODUuMTUzYS43NTIuNzUyIDAgMCAxIC4xNDMgMS4wNTJsLTggMTAuNWEuNzUuNzUgMCAwIDEtMS4xMjcuMDc1bC00LjUtNC41YS43NS43NSAwIDAgMSAxLjA2LTEuMDZsMy44OTQgMy44OTMgNy40OC05LjgxN2EuNzUuNzUgMCAwIDEgMS4wNS0uMTQzWiIgLz48L3N2Zz4=)]"
-      >
-        <li class="text-left">
-          tailwindcss v3.3.2
-        </li>
-        <li class="text-left">
-          nuxt v3.6.1
-        </li>
-        <!-- ... -->
-      </ul>
-    </div>
-    <InputEntry />
+    <h1 class="text-2xl">index page</h1>
+    <template v-if="!pending">      
+      <div class="border " v-for="blog in blogs" :key="blog.id">
+       <div class="text-2xl">{{ blog.title }}</div>
+       <div>{{ blog.content }}</div>
+       <div>is published : {{ blog.published }}</div>
+      </div>
+    </template>
   </div>
 </template>

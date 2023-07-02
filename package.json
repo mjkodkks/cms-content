@@ -1,5 +1,0 @@
-{
-  "devDependencies": {
-    "@nestjs/swagger": "^7.0.10"
-  }
-}
